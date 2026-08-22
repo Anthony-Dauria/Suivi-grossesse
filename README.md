@@ -61,17 +61,45 @@ npm run lint
 
 ## L’installer sur un téléphone
 
-L’application est une PWA : elle s’installe sur l’écran d’accueil et fonctionne hors connexion.
+L’application est une PWA : une fois publiée, elle s’installe sur l’écran d’accueil, s’ouvre en
+plein écran sans barre de navigateur et fonctionne hors connexion.
 
-1. Publier le contenu de `dist/` sur n’importe quel hébergement statique (Netlify, Vercel, GitHub
-   Pages, un simple dossier servi en HTTPS). Le build utilise des chemins relatifs, il fonctionne
-   donc aussi dans un sous-répertoire.
-2. Ouvrir l’adresse sur le téléphone.
-3. **iPhone** : bouton Partager → « Sur l’écran d’accueil ».
-   **Android** : menu ⋮ → « Installer l’application ».
+### 1. La publier
 
-Les données étant propres à l’appareil et au navigateur, l’écran Réglages permet d’exporter une
-sauvegarde JSON et de la réimporter (utile en cas de changement de téléphone).
+Un workflow GitHub Actions (`.github/workflows/publier.yml`) construit et publie l’application à
+chaque push. Il faut l’activer une fois :
+
+1. Dans le dépôt GitHub : **Settings → Pages**.
+2. **Source** : choisir **GitHub Actions**.
+3. Relancer le workflow depuis l’onglet **Actions** si besoin (**Publier l’application → Run
+   workflow**).
+
+L’adresse publiée est ensuite `https://<compte>.github.io/<dépôt>/`.
+
+Toute autre solution fonctionne aussi : `npm run build`, puis déposer le contenu de `dist/` sur
+Netlify, Vercel ou n’importe quel hébergement statique en HTTPS. Le build utilise des chemins
+relatifs, il tourne donc aussi bien à la racine que dans un sous-répertoire.
+
+### 2. L’ajouter à l’écran d’accueil
+
+**iPhone** — il faut passer par **Safari**, Chrome sur iOS ne sait pas installer une application.
+
+1. Ouvrir l’adresse dans Safari.
+2. Toucher le bouton **Partager** (le carré avec une flèche vers le haut, en bas de l’écran).
+3. Faire défiler et choisir **« Sur l’écran d’accueil »**.
+4. Valider avec **Ajouter**.
+
+**Android** — dans Chrome, menu **⋮** puis **« Installer l’application »** ou **« Ajouter à
+l’écran d’accueil »**.
+
+### 3. Après l’installation
+
+Le premier lancement doit se faire avec du réseau, le temps que le service worker mette
+l’application en cache ; ensuite elle s’ouvre hors connexion.
+
+Les données sont enregistrées dans le navigateur de l’appareil : elles ne suivent pas d’un
+téléphone à l’autre. L’écran Réglages permet d’exporter une sauvegarde JSON et de la réimporter.
+C’est aussi là qu’on cale la règle « taille réelle » sur une carte bancaire.
 
 ## Organisation du code
 
