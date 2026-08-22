@@ -1,0 +1,20 @@
+{
+  "name": "Ma grossesse — suivi complet",
+  "short_name": "Ma grossesse",
+  "description": "Suivi de grossesse semaine par semaine, conseils alimentaires, rendez-vous et checklists.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf6f2",
+  "theme_color": "#faf6f2",
+  "categories": ["health", "lifestyle"],
+  "icons": [
+    { "src": "./icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "./icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icone-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
