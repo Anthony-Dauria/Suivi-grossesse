@@ -79,6 +79,11 @@ export function nombreFr(valeur: number, decimales = 1): string {
   return valeur.toFixed(decimales).replace('.', ',')
 }
 
+/** Comme nombreFr, mais sans décimale inutile : 30,0 → 30 */
+export function nombreCompact(valeur: number, decimales = 1): string {
+  return nombreFr(valeur, decimales).replace(/,0+$/, '')
+}
+
 export function formatJourMois(d: Date): string {
   return `${d.getDate()} ${MOIS_FR[d.getMonth()]}`
 }

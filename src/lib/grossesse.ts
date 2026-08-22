@@ -11,8 +11,16 @@ export type Profil = {
   poidsAvant: number | null
   tailleCm: number | null
   toxoplasmose: 'immunisee' | 'non-immunisee' | 'inconnu'
+  /**
+   * Pixels CSS par centimètre réel sur cet écran. La valeur par défaut suppose
+   * 96 dpi ; l'écran de réglages permet de la caler sur une carte bancaire.
+   */
+  pxParCm: number
   configure: boolean
 }
+
+/** 96 dpi : l'hypothèse par défaut du CSS, souvent proche sans être exacte */
+export const PX_PAR_CM_DEFAUT = 96 / 2.54
 
 export const PROFIL_VIDE: Profil = {
   prenomMaman: '',
@@ -22,6 +30,7 @@ export const PROFIL_VIDE: Profil = {
   poidsAvant: null,
   tailleCm: null,
   toxoplasmose: 'inconnu',
+  pxParCm: PX_PAR_CM_DEFAUT,
   configure: false,
 }
 

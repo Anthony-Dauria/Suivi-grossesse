@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Anneau } from '../components/Anneau'
 import { Carte, Puce, TitreSection } from '../components/ui'
+import { SilhouetteBebe } from '../components/SilhouetteBebe'
 import { useDonnees } from '../lib/donnees'
 import { ETAPES } from '../data/suiviMedical'
 import { ALIMENTS } from '../data/aliments'
@@ -76,15 +77,17 @@ export function Accueil({ aller }: { aller: (onglet: Onglet, sousOnglet?: string
       {semaine && (
         <>
           <TitreSection>Ton bébé cette semaine</TitreSection>
-          <button onClick={() => aller('semaines')} className="block w-full text-left">
+          <button
+            onClick={() => aller('semaines')}
+            aria-label={`Voir le détail de la semaine ${sa} SA`}
+            className="block w-full text-left"
+          >
             <Carte className="transition active:scale-[0.99]">
-              <div className="flex items-center gap-4">
-                <div className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-rose-soft text-3xl">
-                  {semaine.emoji}
-                </div>
+              <div className="flex items-center gap-3">
+                <SilhouetteBebe sa={sa} className="w-24 shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[15px] font-medium text-ink">
-                    Grand comme {semaine.comparaison}
+                  <p className="text-[15px] font-medium leading-snug text-ink">
+                    Grand comme {semaine.comparaison} {semaine.emoji}
                   </p>
                   <p className="mt-1 text-[13px] text-muted">
                     {semaine.taille} · {semaine.poids}

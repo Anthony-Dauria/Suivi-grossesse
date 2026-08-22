@@ -13,7 +13,17 @@ aucune publicité.
 et poids du bébé, conseils de la semaine, prochaines étapes médicales et rappel alimentaire du jour.
 
 **Semaine par semaine** — 39 fiches, de 3 à 41 SA : développement du bébé, changements du corps,
-conseils concrets et étape marquante de la semaine.
+conseils concrets et étape marquante de la semaine. Chaque fiche montre **à quoi ressemble le bébé
+à cette semaine précise** : une illustration entièrement paramétrique, qui passe de l'amas de
+cellules à l'embryon replié avec son bourgeon caudal, puis au fœtus à grosse tête, puis au bébé
+potelé aux traits dessinés — la morphologie est interpolée semaine par semaine, pas choisie parmi
+quelques images figées.
+
+Sous l'illustration, une **règle graduée** donne sa longueur. Tant qu'elle tient dans l'écran (jusqu'à
+environ 13 SA), elle est tracée **à l'échelle 1:1**, avec le contour d'une carte bancaire à la même
+échelle : on pose sa carte contre l'écran pour comparer. Au-delà, l'échelle est réduite et annoncée
+comme telle. L'écran Réglages permet de caler la règle sur la taille réelle d'une carte bancaire,
+pour que le 1:1 soit exact sur ce téléphone.
 
 **Bien manger** — le module le plus fourni :
 - *Puis-je manger ça ?* : base de 70 entrées consultables (fromages, charcuterie, poissons, œufs,

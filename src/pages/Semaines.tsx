@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { SEMAINES } from '../data/semaines'
 import { Carte, Puce, TitreSection } from '../components/ui'
+import { SilhouetteBebe } from '../components/SilhouetteBebe'
+import { EchelleTaille } from '../components/EchelleTaille'
 import { useDonnees } from '../lib/donnees'
 import { dateDebutSA, moisDeGrossesse, trimestre } from '../lib/grossesse'
 import { ajouterJours, formatJourMois } from '../lib/dates'
 import { ordinal } from '../lib/texte'
 
 export function Semaines() {
-  const { grossesse } = useDonnees()
+  const { grossesse, profil } = useDonnees()
   const saActuelle = grossesse?.sa ?? 12
   const [selection, setSelection] = useState(() =>
     Math.min(Math.max(saActuelle, SEMAINES[0].sa), SEMAINES[SEMAINES.length - 1].sa),
@@ -82,23 +84,30 @@ export function Semaines() {
 
       <TitreSection>Le bébé</TitreSection>
       <Carte>
-        <div className="flex items-center gap-4">
-          <div className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-rose-soft text-3xl">
-            {semaine.emoji}
-          </div>
-          <div>
-            <p className="text-[15px] font-medium text-ink">Grand comme {semaine.comparaison}</p>
-            <div className="mt-2 flex gap-4 text-[13px] text-muted">
-              <span>
+        <div className="flex items-center gap-3">
+          <SilhouetteBebe sa={semaine.sa} className="w-32 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-[15px] font-medium leading-snug text-ink">
+              Grand comme {semaine.comparaison} {semaine.emoji}
+            </p>
+            <div className="mt-2 space-y-0.5 text-[13px] text-muted">
+              <p>
                 <strong className="font-display text-base text-ink">{semaine.taille}</strong> de long
-              </span>
-              <span>
+              </p>
+              <p>
                 <strong className="font-display text-base text-ink">{semaine.poids}</strong>
-              </span>
+              </p>
             </div>
           </div>
         </div>
-        <p className="mt-4 text-sm leading-relaxed text-ink">{semaine.bebe}</p>
+        <p className="mt-3 text-sm leading-relaxed text-ink">{semaine.bebe}</p>
+        <div className="mt-4 border-t border-line pt-4">
+          <EchelleTaille
+            tailleCm={semaine.tailleCm}
+            pxParCm={profil.pxParCm}
+            mesure={semaine.mesure}
+          />
+        </div>
       </Carte>
 
       <TitreSection>Toi</TitreSection>

@@ -2,7 +2,16 @@ export type Semaine = {
   /** Semaine d’aménorrhée (convention française) */
   sa: number
   taille: string
+  /** Longueur en centimètres, pour les visualisations à l’échelle */
+  tailleCm: number
   poids: string
+  /** Masse en grammes (0 tant qu’elle n’est pas mesurable) */
+  poidsG: number
+  /**
+   * Jusqu’à 20 SA on mesure le bébé assis (crâne-coccyx), ensuite de la tête
+   * aux pieds : d’où le saut apparent de taille à 21 SA.
+   */
+  mesure: 'assise' | 'debout'
   comparaison: string
   emoji: string
   bebe: string
@@ -16,11 +25,14 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 3,
     taille: '0,1 mm',
+    tailleCm: 0.01,
     poids: '—',
+    poidsG: 0,
+    mesure: 'assise',
     comparaison: 'une tête d’épingle',
     emoji: '✨',
     bebe:
-      "La fécondation vient d’avoir lieu. L'œuf, une petite boule de cellules appelée blastocyste, descend doucement la trompe et commence à se nicher dans la muqueuse de l’utérus. Tout est déjà écrit : le sexe, la couleur des yeux, le groupe sanguin.",
+      "La fécondation vient d’avoir lieu. L’œuf, une petite boule de cellules appelée blastocyste, descend doucement la trompe et commence à se nicher dans la muqueuse de l’utérus. Tout est déjà écrit : le sexe, la couleur des yeux, le groupe sanguin.",
     maman:
       "Tu ne sens encore rien, et c’est normal : le test de grossesse est souvent trop précoce. Quelques femmes remarquent de minuscules saignements roses au moment de la nidation, autour du 7e jour.",
     conseils: [
@@ -32,7 +44,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 4,
     taille: '1 mm',
+    tailleCm: 0.1,
     poids: '—',
+    poidsG: 0,
+    mesure: 'assise',
     comparaison: 'une graine de pavot',
     emoji: '🌱',
     bebe:
@@ -49,7 +64,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 5,
     taille: '2 mm',
+    tailleCm: 0.2,
     poids: '—',
+    poidsG: 0,
+    mesure: 'assise',
     comparaison: 'une graine de sésame',
     emoji: '🌾',
     bebe:
@@ -65,7 +83,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 6,
     taille: '4 mm',
+    tailleCm: 0.4,
     poids: '—',
+    poidsG: 0,
+    mesure: 'assise',
     comparaison: 'une lentille',
     emoji: '🫘',
     bebe:
@@ -81,7 +102,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 7,
     taille: '1 cm',
+    tailleCm: 1.0,
     poids: '1 g',
+    poidsG: 1,
+    mesure: 'assise',
     comparaison: 'une myrtille',
     emoji: '🫐',
     bebe:
@@ -97,7 +121,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 8,
     taille: '1,6 cm',
+    tailleCm: 1.6,
     poids: '1 g',
+    poidsG: 1,
+    mesure: 'assise',
     comparaison: 'un haricot rouge',
     emoji: '🫘',
     bebe:
@@ -113,7 +140,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 9,
     taille: '2,3 cm',
+    tailleCm: 2.3,
     poids: '2 g',
+    poidsG: 2,
+    mesure: 'assise',
     comparaison: 'une olive',
     emoji: '🫒',
     bebe:
@@ -129,7 +159,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 10,
     taille: '3,1 cm',
+    tailleCm: 3.1,
     poids: '4 g',
+    poidsG: 4,
+    mesure: 'assise',
     comparaison: 'un pruneau',
     emoji: '🍇',
     bebe:
@@ -146,7 +179,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 11,
     taille: '4,1 cm',
+    tailleCm: 4.1,
     poids: '7 g',
+    poidsG: 7,
+    mesure: 'assise',
     comparaison: 'un citron vert',
     emoji: '🍋',
     bebe:
@@ -163,7 +199,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 12,
     taille: '5,4 cm',
+    tailleCm: 5.4,
     poids: '14 g',
+    poidsG: 14,
+    mesure: 'assise',
     comparaison: 'une clémentine',
     emoji: '🍊',
     bebe:
@@ -179,7 +218,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 13,
     taille: '7,4 cm',
+    tailleCm: 7.4,
     poids: '23 g',
+    poidsG: 23,
+    mesure: 'assise',
     comparaison: 'un citron',
     emoji: '🍋',
     bebe:
@@ -195,7 +237,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 14,
     taille: '8,7 cm',
+    tailleCm: 8.7,
     poids: '43 g',
+    poidsG: 43,
+    mesure: 'assise',
     comparaison: 'une pêche',
     emoji: '🍑',
     bebe:
@@ -211,7 +256,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 15,
     taille: '10,1 cm',
+    tailleCm: 10.1,
     poids: '70 g',
+    poidsG: 70,
+    mesure: 'assise',
     comparaison: 'une pomme',
     emoji: '🍎',
     bebe:
@@ -228,7 +276,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 16,
     taille: '11,6 cm',
+    tailleCm: 11.6,
     poids: '100 g',
+    poidsG: 100,
+    mesure: 'assise',
     comparaison: 'un avocat',
     emoji: '🥑',
     bebe:
@@ -244,7 +295,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 17,
     taille: '13 cm',
+    tailleCm: 13.0,
     poids: '140 g',
+    poidsG: 140,
+    mesure: 'assise',
     comparaison: 'une poire',
     emoji: '🍐',
     bebe:
@@ -260,7 +314,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 18,
     taille: '14,2 cm',
+    tailleCm: 14.2,
     poids: '190 g',
+    poidsG: 190,
+    mesure: 'assise',
     comparaison: 'un poivron',
     emoji: '🫑',
     bebe:
@@ -276,7 +333,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 19,
     taille: '15,3 cm',
+    tailleCm: 15.3,
     poids: '240 g',
+    poidsG: 240,
+    mesure: 'assise',
     comparaison: 'une mangue',
     emoji: '🥭',
     bebe:
@@ -292,7 +352,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 20,
     taille: '16,4 cm',
+    tailleCm: 16.4,
     poids: '300 g',
+    poidsG: 300,
+    mesure: 'assise',
     comparaison: 'une banane',
     emoji: '🍌',
     bebe:
@@ -309,7 +372,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 21,
     taille: '25,6 cm',
+    tailleCm: 25.6,
     poids: '360 g',
+    poidsG: 360,
+    mesure: 'debout',
     comparaison: 'une carotte',
     emoji: '🥕',
     bebe:
@@ -325,7 +391,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 22,
     taille: '27,8 cm',
+    tailleCm: 27.8,
     poids: '430 g',
+    poidsG: 430,
+    mesure: 'debout',
     comparaison: 'une courgette',
     emoji: '🥒',
     bebe:
@@ -341,7 +410,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 23,
     taille: '28,9 cm',
+    tailleCm: 28.9,
     poids: '501 g',
+    poidsG: 501,
+    mesure: 'debout',
     comparaison: 'un gros pamplemousse',
     emoji: '🍈',
     bebe:
@@ -357,7 +429,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 24,
     taille: '30 cm',
+    tailleCm: 30.0,
     poids: '600 g',
+    poidsG: 600,
+    mesure: 'debout',
     comparaison: 'un épi de maïs',
     emoji: '🌽',
     bebe:
@@ -374,7 +449,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 25,
     taille: '34,6 cm',
+    tailleCm: 34.6,
     poids: '660 g',
+    poidsG: 660,
+    mesure: 'debout',
     comparaison: 'un chou-rave',
     emoji: '🥬',
     bebe:
@@ -390,7 +468,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 26,
     taille: '35,6 cm',
+    tailleCm: 35.6,
     poids: '760 g',
+    poidsG: 760,
+    mesure: 'debout',
     comparaison: 'un chou-fleur',
     emoji: '🥦',
     bebe:
@@ -406,7 +487,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 27,
     taille: '36,6 cm',
+    tailleCm: 36.6,
     poids: '875 g',
+    poidsG: 875,
+    mesure: 'debout',
     comparaison: 'une salade',
     emoji: '🥬',
     bebe:
@@ -422,7 +506,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 28,
     taille: '37,6 cm',
+    tailleCm: 37.6,
     poids: '1 005 g',
+    poidsG: 1005,
+    mesure: 'debout',
     comparaison: 'une aubergine',
     emoji: '🍆',
     bebe:
@@ -439,7 +526,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 29,
     taille: '38,6 cm',
+    tailleCm: 38.6,
     poids: '1 150 g',
+    poidsG: 1150,
+    mesure: 'debout',
     comparaison: 'une courge butternut',
     emoji: '🎃',
     bebe:
@@ -455,7 +545,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 30,
     taille: '39,9 cm',
+    tailleCm: 39.9,
     poids: '1 320 g',
+    poidsG: 1320,
+    mesure: 'debout',
     comparaison: 'un chou',
     emoji: '🥬',
     bebe:
@@ -472,7 +565,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 31,
     taille: '41,1 cm',
+    tailleCm: 41.1,
     poids: '1 500 g',
+    poidsG: 1500,
+    mesure: 'debout',
     comparaison: 'une noix de coco',
     emoji: '🥥',
     bebe:
@@ -488,7 +584,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 32,
     taille: '42,4 cm',
+    tailleCm: 42.4,
     poids: '1 700 g',
+    poidsG: 1700,
+    mesure: 'debout',
     comparaison: 'une grosse courge',
     emoji: '🎃',
     bebe:
@@ -504,7 +603,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 33,
     taille: '43,7 cm',
+    tailleCm: 43.7,
     poids: '1 920 g',
+    poidsG: 1920,
+    mesure: 'debout',
     comparaison: 'un ananas',
     emoji: '🍍',
     bebe:
@@ -520,7 +622,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 34,
     taille: '45 cm',
+    tailleCm: 45.0,
     poids: '2 150 g',
+    poidsG: 2150,
+    mesure: 'debout',
     comparaison: 'un melon',
     emoji: '🍈',
     bebe:
@@ -537,7 +642,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 35,
     taille: '46,2 cm',
+    tailleCm: 46.2,
     poids: '2 380 g',
+    poidsG: 2380,
+    mesure: 'debout',
     comparaison: 'un melon miel',
     emoji: '🍈',
     bebe:
@@ -554,7 +662,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 36,
     taille: '47,4 cm',
+    tailleCm: 47.4,
     poids: '2 620 g',
+    poidsG: 2620,
+    mesure: 'debout',
     comparaison: 'une laitue romaine',
     emoji: '🥬',
     bebe:
@@ -571,7 +682,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 37,
     taille: '48,6 cm',
+    tailleCm: 48.6,
     poids: '2 860 g',
+    poidsG: 2860,
+    mesure: 'debout',
     comparaison: 'une blette',
     emoji: '🥬',
     bebe:
@@ -588,7 +702,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 38,
     taille: '49,8 cm',
+    tailleCm: 49.8,
     poids: '3 080 g',
+    poidsG: 3080,
+    mesure: 'debout',
     comparaison: 'un poireau',
     emoji: '🥬',
     bebe:
@@ -605,7 +722,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 39,
     taille: '50,7 cm',
+    tailleCm: 50.7,
     poids: '3 290 g',
+    poidsG: 3290,
+    mesure: 'debout',
     comparaison: 'une pastèque',
     emoji: '🍉',
     bebe:
@@ -621,7 +741,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 40,
     taille: '51,2 cm',
+    tailleCm: 51.2,
     poids: '3 460 g',
+    poidsG: 3460,
+    mesure: 'debout',
     comparaison: 'un potiron',
     emoji: '🎃',
     bebe:
@@ -638,7 +761,10 @@ export const SEMAINES: Semaine[] = [
   {
     sa: 41,
     taille: '51,7 cm',
+    tailleCm: 51.7,
     poids: '3 600 g',
+    poidsG: 3600,
+    mesure: 'debout',
     comparaison: 'un gros potiron',
     emoji: '🎃',
     bebe:

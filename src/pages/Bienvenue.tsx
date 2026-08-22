@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Bouton, Champ, classesInput } from '../components/ui'
 import { useDonnees } from '../lib/donnees'
-import { calculerEtat, type ModeDate, type Profil } from '../lib/grossesse'
+import { PX_PAR_CM_DEFAUT, calculerEtat, type ModeDate, type Profil } from '../lib/grossesse'
 import { formatLong, versISO, aujourdhui } from '../lib/dates'
 import { ordinal } from '../lib/texte'
 
@@ -29,6 +29,7 @@ export function Bienvenue() {
     poidsAvant: poidsAvant ? Number(poidsAvant) : null,
     tailleCm: tailleCm ? Number(tailleCm) : null,
     toxoplasmose: toxo,
+    pxParCm: PX_PAR_CM_DEFAUT,
     configure: true,
   }
   const apercu = dateRef ? calculerEtat(brouillon) : null

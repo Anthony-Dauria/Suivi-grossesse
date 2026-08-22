@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Bouton, Carte, Champ, TitreSection, classesInput } from '../components/ui'
 import { useDonnees } from '../lib/donnees'
-import { calculerEtat, type ModeDate, type Profil } from '../lib/grossesse'
-import { formatLong, versISO, aujourdhui } from '../lib/dates'
+import { PX_PAR_CM_DEFAUT, calculerEtat, type ModeDate, type Profil } from '../lib/grossesse'
+import { formatLong, nombreFr, versISO, aujourdhui } from '../lib/dates'
+import { CARTE_CM } from '../components/EchelleTaille'
 
 export function Reglages() {
   const { profil, grossesse, majProfil, toutEffacer } = useDonnees()
@@ -132,6 +133,42 @@ export function Reglages() {
             <option value="non-immunisee">Non immunisée</option>
           </select>
         </Champ>
+      </Carte>
+
+      <TitreSection>Taille réelle à l’écran</TitreSection>
+      <Carte>
+        <p className="text-sm leading-relaxed text-muted">
+          Les fiches semaine par semaine affichent la longueur du bébé à l’échelle 1:1. Pour que la
+          règle soit juste sur ton téléphone, pose une carte bancaire sur l’écran et ajuste le
+          rectangle ci-dessous jusqu’à ce qu’il ait exactement la même longueur.
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <div
+            className="flex h-[3.4rem] shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-rose bg-rose-soft/50 text-[11px] uppercase tracking-wide text-rose-deep"
+            style={{ width: CARTE_CM * profil.pxParCm }}
+          >
+            carte bancaire
+          </div>
+        </div>
+        <input
+          type="range"
+          min={26}
+          max={64}
+          step={0.2}
+          value={profil.pxParCm}
+          onChange={(e) => majProfil({ pxParCm: Number(e.target.value) })}
+          className="mt-4 w-full accent-rose-deep"
+          aria-label="Ajuster l’échelle de l’écran"
+        />
+        <div className="mt-1 flex items-center justify-between text-[12px] text-muted">
+          <span>{nombreFr(profil.pxParCm, 1)} points par centimètre</span>
+          <button
+            className="text-rose-deep"
+            onClick={() => majProfil({ pxParCm: PX_PAR_CM_DEFAUT })}
+          >
+            Valeur par défaut
+          </button>
+        </div>
       </Carte>
 
       <TitreSection>Mes données</TitreSection>

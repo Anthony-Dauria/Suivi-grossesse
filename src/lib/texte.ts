@@ -8,7 +8,7 @@ export function normaliser(texte: string): string {
     .trim()
 }
 
-/** 1 → « 1er », 2 → « 2e » (avec l'exposant géré par l'appelant si besoin) */
+/** 1 → « 1er », 2 → « 2e » (avec l’exposant géré par l’appelant si besoin) */
 export function ordinal(n: number): string {
   return n === 1 ? '1er' : `${n}e`
 }
