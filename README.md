@@ -86,6 +86,14 @@ l’activation manuelle se fait dans **Settings → Pages → Source : GitHub Ac
 
 L’adresse publiée est alors `https://<compte>.github.io/<dépôt>/`.
 
+Deux erreurs possibles sur l’étape `configure-pages` :
+
+| Message | Cause | Correctif |
+| --- | --- | --- |
+| `Get Pages site failed … Not Found` | Pages n’est pas activé | **Settings → Pages → Source : GitHub Actions** |
+| `Create Pages site failed … Resource not accessible by integration` | le workflow n’a pas le droit de l’activer | vérifier **Settings → Actions → General → Workflow permissions : Read and write**, et que le plan autorise Pages sur ce dépôt |
+
+
 Dans tous les cas, le build utilise des chemins relatifs : l’application fonctionne aussi bien à
 la racine d’un domaine que dans un sous-répertoire.
 
