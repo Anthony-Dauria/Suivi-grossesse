@@ -66,19 +66,28 @@ plein écran sans barre de navigateur et fonctionne hors connexion.
 
 ### 1. La publier
 
-Un workflow GitHub Actions (`.github/workflows/publier.yml`) construit et publie l’application à
-chaque push. Il faut l’activer une fois :
+Il faut une adresse en HTTPS : une PWA ne s’installe pas depuis un fichier local.
 
-1. Dans le dépôt GitHub : **Settings → Pages**.
-2. **Source** : choisir **GitHub Actions**.
-3. Relancer le workflow depuis l’onglet **Actions** si besoin (**Publier l’application → Run
-   workflow**).
+**Option A — Netlify, Vercel ou Cloudflare Pages.** La plus simple quand le dépôt est privé :
+ces plateformes déploient gratuitement depuis un dépôt privé sans le rendre public. Connecter le
+dépôt, puis renseigner :
 
-L’adresse publiée est ensuite `https://<compte>.github.io/<dépôt>/`.
+- commande de build : `npm run build`
+- dossier à publier : `dist`
 
-Toute autre solution fonctionne aussi : `npm run build`, puis déposer le contenu de `dist/` sur
-Netlify, Vercel ou n’importe quel hébergement statique en HTTPS. Le build utilise des chemins
-relatifs, il tourne donc aussi bien à la racine que dans un sous-répertoire.
+**Option B — GitHub Pages.** Un workflow (`.github/workflows/publier.yml`) construit et publie
+l’application à chaque push. Attention : **GitHub Pages n’est pas disponible pour un dépôt privé
+sur un compte gratuit**. Il faut donc soit un compte GitHub Pro, soit passer le dépôt en public
+(le site publié, lui, est public dans les deux cas).
+
+Le workflow tente d’activer Pages tout seul (`enablement: true`). Si le plan ne le permet pas,
+l’étape `configure-pages` échoue avec `Get Pages site failed … Not Found`. En cas de besoin,
+l’activation manuelle se fait dans **Settings → Pages → Source : GitHub Actions**.
+
+L’adresse publiée est alors `https://<compte>.github.io/<dépôt>/`.
+
+Dans tous les cas, le build utilise des chemins relatifs : l’application fonctionne aussi bien à
+la racine d’un domaine que dans un sous-répertoire.
 
 ### 2. L’ajouter à l’écran d’accueil
 

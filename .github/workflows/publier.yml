@@ -27,7 +27,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # enablement active Pages via l'API : évite d'avoir à le faire à la main
+      # dans les réglages du dépôt. Nécessite que le plan le permette — Pages
+      # sur dépôt privé demande un compte GitHub Pro.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
