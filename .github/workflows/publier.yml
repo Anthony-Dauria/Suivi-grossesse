@@ -44,5 +44,52 @@ jobs:
       name: github-pages
       url: ${{ steps.deploiement.outputs.page_url }}
     steps:
+      # Tant que la source Pages du dépôt est « Deploy from a branch », GitHub
+      # lance en parallèle son propre déploiement, qui publie la racine du dépôt
+      # — donc la page de développement, vide. Le dernier déploiement arrivé
+      # gagne : on laisse donc l'autre finir avant de publier le vrai build.
+      - name: Laisser finir le déploiement de branche
+        env:
+          JETON: ${{ github.token }}
+          DEPOT: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os, time, urllib.request
+
+          url = (
+              f"https://api.github.com/repos/{os.environ['DEPOT']}/actions/runs"
+              f"?head_sha={os.environ['SHA']}&per_page=50"
+          )
+          entetes = {
+              'Authorization': f"Bearer {os.environ['JETON']}",
+              'Accept': 'application/vnd.github+json',
+          }
+
+          def en_cours():
+              requete = urllib.request.Request(url, headers=entetes)
+              with urllib.request.urlopen(requete, timeout=20) as reponse:
+                  runs = json.load(reponse)['workflow_runs']
+              return [
+                  r for r in runs
+                  if r['name'] == 'pages build and deployment'
+                  and r['status'] != 'completed'
+              ]
+
+          for tentative in range(30):
+              try:
+                  restants = en_cours()
+              except Exception as erreur:
+                  print('Interrogation impossible, on publie sans attendre :', erreur)
+                  break
+              if not restants:
+                  print('Aucun déploiement de branche en cours.')
+                  break
+              print(f"{len(restants)} déploiement(s) de branche en cours, attente…")
+              time.sleep(10)
+          else:
+              print('Délai dépassé : on publie quand même.')
+          PY
+
       - id: deploiement
         uses: actions/deploy-pages@v4
