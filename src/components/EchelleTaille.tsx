@@ -3,12 +3,51 @@ import { nombreCompact, nombreFr } from '../lib/dates'
 
 /** Longueur normalisée d'une carte bancaire, en centimètres */
 export const CARTE_CM = 8.56
+/** Diamètre d'une pièce de 2 €, en centimètres */
+export const PIECE_CM = 2.575
+
+type Reference = {
+  cle: string
+  /** Nom au singulier, sans article */
+  etiquette: string
+  cm: number
+  forme: 'rectangle' | 'ronde'
+  /** Ce que mesure la référence, pour la phrase de comparaison */
+  mesure: string
+  /** Phrase employée quand le bébé est encore plus petit que la référence */
+  plusPetit: string
+}
+
+/**
+ * Repères du quotidien, du plus grand au plus petit. On retient le plus grand
+ * qui tient dans la largeur disponible : une carte bancaire à l'échelle réduite
+ * des dernières semaines, une pièce de 2 € quand le dessin est à 1:1 et qu'une
+ * carte ne rentrerait pas dans l'écran.
+ */
+const REFERENCES: Reference[] = [
+  {
+    cle: 'carte',
+    etiquette: 'carte bancaire',
+    cm: CARTE_CM,
+    forme: 'rectangle',
+    mesure: 'sa longueur',
+    plusPetit: 'Le bébé est encore un peu plus court.',
+  },
+  {
+    cle: 'piece',
+    etiquette: 'pièce de 2 €',
+    cm: PIECE_CM,
+    forme: 'ronde',
+    mesure: 'son diamètre',
+    plusPetit: 'Le bébé tiendrait tout entier dedans.',
+  },
+]
 
 /**
  * Règle graduée montrant la longueur du bébé. Tant qu'elle tient dans la
- * largeur disponible, elle est tracée à l'échelle 1:1 : on peut poser une carte
- * bancaire contre l'écran pour comparer. Au-delà, l'échelle est réduite, et
- * annoncée comme telle.
+ * largeur disponible, elle est tracée à l'échelle 1:1 : on peut poser l'objet
+ * de référence contre l'écran pour comparer. Au-delà, l'échelle est réduite,
+ * et annoncée comme telle.
  */
 export function EchelleTaille({
   tailleCm,
@@ -38,8 +77,10 @@ export function EchelleTaille({
   const grandeurNature = facteur > 0.995
 
   const longueur = tailleCm * pxParCmAffiche
-  const carte = CARTE_CM * pxParCmAffiche
-  const carteVisible = carte > 12 && carte <= utile
+  const reference =
+    pxParCmAffiche > 0 ? REFERENCES.find((r) => r.cm * pxParCmAffiche <= utile) : undefined
+  const tailleReference = reference ? reference.cm * pxParCmAffiche : 0
+  const rapport = reference ? tailleCm / reference.cm : 0
 
   // Graduations lisibles : au centimètre quand il y a la place, sinon tous les 5 ou 10.
   const pas = pxParCmAffiche > 13 ? 1 : pxParCmAffiche > 4 ? 5 : 10
@@ -79,18 +120,29 @@ export function EchelleTaille({
         </span>
       </p>
 
-      {carteVisible ? (
+      {reference ? (
         <div className="mt-4">
-          <div
-            className="flex items-center justify-center overflow-hidden whitespace-nowrap rounded border border-dashed border-muted/50 bg-cream text-[10px] uppercase tracking-wide text-muted"
-            style={{ width: carte, height: 24 }}
-          >
-            {carte > 100 ? 'carte bancaire' : ''}
-          </div>
+          {reference.forme === 'rectangle' ? (
+            <div
+              className="flex items-center justify-center overflow-hidden whitespace-nowrap rounded border border-dashed border-muted/50 bg-cream text-[10px] uppercase tracking-wide text-muted"
+              style={{ width: tailleReference, height: 24 }}
+            >
+              {tailleReference > 100 ? reference.etiquette : ''}
+            </div>
+          ) : (
+            <div
+              className="flex items-center justify-center rounded-full border border-dashed border-muted/50 bg-cream text-[11px] font-medium text-muted"
+              style={{ width: tailleReference, height: tailleReference }}
+            >
+              {tailleReference > 44 ? '2 €' : ''}
+            </div>
+          )}
           <p className="mt-1.5 text-[12px] leading-relaxed text-muted">
-            {grandeurNature
-              ? 'Longueur d’une carte bancaire, à la même échelle : pose la tienne contre l’écran.'
-              : `Longueur d’une carte bancaire, à la même échelle — le bébé en fait ${nombreFr(tailleCm / CARTE_CM, 1)} fois.`}
+            Une {reference.etiquette}, à la même échelle
+            {grandeurNature ? ' : pose la tienne contre l’écran pour comparer' : ''}.{' '}
+            {rapport >= 1.05
+              ? `Le bébé en fait ${nombreFr(rapport, 1)} fois ${reference.mesure}.`
+              : reference.plusPetit}
           </p>
         </div>
       ) : (

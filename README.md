@@ -20,10 +20,12 @@ potelé aux traits dessinés — la morphologie est interpolée semaine par sema
 quelques images figées.
 
 Sous l'illustration, une **règle graduée** donne sa longueur. Tant qu'elle tient dans l'écran (jusqu'à
-environ 13 SA), elle est tracée **à l'échelle 1:1**, avec le contour d'une carte bancaire à la même
-échelle : on pose sa carte contre l'écran pour comparer. Au-delà, l'échelle est réduite et annoncée
-comme telle. L'écran Réglages permet de caler la règle sur la taille réelle d'une carte bancaire,
-pour que le 1:1 soit exact sur ce téléphone.
+environ 13 SA), elle est tracée **à l'échelle 1:1** ; au-delà, l'échelle est réduite et annoncée comme
+telle. Un objet du quotidien est dessiné à la même échelle pour servir de repère : l'application
+retient le plus grand qui tienne dans la largeur disponible — une carte bancaire dès que l'échelle
+est réduite, une pièce de 2 € quand le dessin est à 1:1 et qu'une carte déborderait de l'écran. On
+pose l'objet contre l'écran pour comparer. L'écran Réglages permet de caler la règle sur la taille
+réelle d'une carte bancaire, pour que le 1:1 soit exact sur ce téléphone.
 
 **Bien manger** — le module le plus fourni :
 - *Puis-je manger ça ?* : base de 70 entrées consultables (fromages, charcuterie, poissons, œufs,
