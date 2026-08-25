@@ -7,6 +7,7 @@ import {
   idUnique,
   type Contraction,
   type DosageHcg,
+  type DocumentMedical,
   type PlatPhoto,
   type Etat,
   type NoteJournal,
@@ -57,6 +58,7 @@ export function FournisseurDonnees({ children }: { children: ReactNode }) {
   const [prenoms, setPrenoms] = useState<Prenom[]>(() => lireListe('prenoms'))
   const [dosagesHcg, setDosagesHcg] = useState<DosageHcg[]>(() => lireListe('dosagesHcg'))
   const [platsPhoto, setPlatsPhoto] = useState<PlatPhoto[]>(() => lireListe('platsPhoto'))
+  const [documents, setDocuments] = useState<DocumentMedical[]>(() => lireListe('documents'))
   const [coches, setCoches] = useState<Record<string, boolean>>(() => lire('coches', {}))
 
   useEffect(() => ecrire('profil', profil), [profil])
@@ -69,6 +71,7 @@ export function FournisseurDonnees({ children }: { children: ReactNode }) {
   useEffect(() => ecrire('prenoms', prenoms), [prenoms])
   useEffect(() => ecrire('dosagesHcg', dosagesHcg), [dosagesHcg])
   useEffect(() => ecrire('platsPhoto', platsPhoto), [platsPhoto])
+  useEffect(() => ecrire('documents', documents), [documents])
   useEffect(() => ecrire('coches', coches), [coches])
 
   // Recalcule l’état de la grossesse au changement de jour (onglet laissé ouvert)
@@ -102,6 +105,7 @@ export function FournisseurDonnees({ children }: { children: ReactNode }) {
     prenoms,
     dosagesHcg,
     platsPhoto,
+    documents,
     coches,
     majProfil,
     ajouterPesee: (p) =>
@@ -140,6 +144,9 @@ export function FournisseurDonnees({ children }: { children: ReactNode }) {
     supprimerDosageHcg: (id) => setDosagesHcg((liste) => liste.filter((d) => d.id !== id)),
     ajouterPlatPhoto: (p) => setPlatsPhoto((liste) => [p, ...liste]),
     supprimerPlatPhoto: (id) => setPlatsPhoto((liste) => liste.filter((p) => p.id !== id)),
+    ajouterDocument: (d) =>
+      setDocuments((liste) => [d, ...liste].sort((a, b) => b.date.localeCompare(a.date))),
+    supprimerDocument: (id) => setDocuments((liste) => liste.filter((d) => d.id !== id)),
     basculerCoche: (id) => setCoches((c) => ({ ...c, [id]: !c[id] })),
     toutEffacer: () => {
       Object.keys(localStorage)
@@ -155,6 +162,7 @@ export function FournisseurDonnees({ children }: { children: ReactNode }) {
       setPrenoms([])
       setDosagesHcg([])
       setPlatsPhoto([])
+      setDocuments([])
       setCoches({})
     },
   }

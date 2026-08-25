@@ -124,11 +124,16 @@ C’est aussi là qu’on cale la règle « taille réelle » sur une carte banc
 
 ```
 src/
-  data/         contenu éditorial (semaines, aliments, nutrition, parcours médical, checklists)
-  lib/          calculs de dates et de grossesse, contexte de données, persistance locale
-  components/   briques d’interface, anneau de progression, courbe de poids, icônes
+  data/         contenu éditorial (semaines, aliments, plats, nutrition, parcours médical, hCG)
+  lib/          calculs de dates et de grossesse, contexte de données, persistance locale,
+                stockage des fichiers dans IndexedDB, logique de décision alimentaire
+  components/   briques d’interface, anneau de progression, courbes, silhouette, icônes
   pages/        les six écrans de l’application
 ```
+
+Deux stockages coexistent : `localStorage` pour le suivi et les listes, qui sont légers et
+s’exportent en JSON ; IndexedDB pour les fichiers — photos de plats et documents médicaux — dont
+le volume dépasserait vite le quota de `localStorage`.
 
 Le contenu vit entièrement dans `src/data/` : corriger un conseil ou ajouter un aliment ne demande
 de toucher à aucun composant.

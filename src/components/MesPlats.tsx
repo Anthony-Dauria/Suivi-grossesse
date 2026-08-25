@@ -4,7 +4,7 @@ import { Icone } from './Icones'
 import { AideDecision } from './AideDecision'
 import { STATUT_LABEL } from '../data/aliments'
 import type { Decision } from '../lib/decisionPlat'
-import { compresserImage, enregistrerPhoto, lirePhoto, supprimerPhoto } from '../lib/photos'
+import { compresserImage, enregistrerPhoto, lirePhoto, supprimerPhoto } from '../lib/fichiers'
 import { idUnique, useDonnees, type PlatPhoto } from '../lib/donnees'
 import { aujourdhui, depuisISO, formatCourt, versISO } from '../lib/dates'
 

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Bouton, Carte, Champ, Onglets, Puce, TitreSection, Vide, classesInput } from '../components/ui'
 import { CourbePoids } from '../components/CourbePoids'
 import { CourbeHcg } from '../components/CourbeHcg'
+import { Resultats } from '../components/Resultats'
 import { Icone } from '../components/Icones'
 import { useDonnees } from '../lib/donnees'
 import { PRISE_DE_POIDS } from '../data/nutrition'
@@ -15,11 +16,12 @@ import {
 import { aujourdhui, depuisISO, formatCourt, nombreFr, versISO } from '../lib/dates'
 import { categorieIMC, imc, poidsAttendu } from '../lib/grossesse'
 
-type Vue = 'poids' | 'hcg' | 'journal' | 'mouvements' | 'contractions'
+type Vue = 'poids' | 'hcg' | 'resultats' | 'journal' | 'mouvements' | 'contractions'
 
 const VUES = [
   { id: 'poids' as const, label: 'Poids' },
   { id: 'hcg' as const, label: 'hCG' },
+  { id: 'resultats' as const, label: 'Résultats' },
   { id: 'journal' as const, label: 'Journal' },
   { id: 'mouvements' as const, label: 'Mouvements' },
   { id: 'contractions' as const, label: 'Contractions' },
@@ -32,6 +34,7 @@ export function Suivi({ vueInitiale }: { vueInitiale?: string }) {
       <Onglets valeur={vue} options={VUES} onChange={setVue} />
       {vue === 'poids' && <VuePoids />}
       {vue === 'hcg' && <VueHcg />}
+      {vue === 'resultats' && <Resultats />}
       {vue === 'journal' && <VueJournal />}
       {vue === 'mouvements' && <VueMouvements />}
       {vue === 'contractions' && <VueContractions />}

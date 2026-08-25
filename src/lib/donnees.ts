@@ -16,6 +16,24 @@ export type Contraction = { id: string; debutISO: string; dureeSec: number }
 export type Question = { id: string; texte: string; repondu: boolean }
 export type RdvPerso = { id: string; titre: string; date: string; heure: string; lieu: string }
 export type Prenom = { id: string; nom: string; sexe: 'fille' | 'garcon' | 'mixte'; favori: boolean }
+export type CategorieDocument =
+  | 'analyse'
+  | 'echographie'
+  | 'ordonnance'
+  | 'compte-rendu'
+  | 'autre'
+
+/** Document médical : le fichier vit dans IndexedDB, sous ce même id */
+export type DocumentMedical = {
+  id: string
+  date: string
+  titre: string
+  categorie: CategorieDocument
+  typeMime: string
+  taille: number
+  note: string
+}
+
 /** Plat photographié : la photo elle-même vit dans IndexedDB, sous ce même id */
 export type PlatPhoto = {
   id: string
@@ -39,6 +57,7 @@ export type Etat = {
   prenoms: Prenom[]
   dosagesHcg: DosageHcg[]
   platsPhoto: PlatPhoto[]
+  documents: DocumentMedical[]
   coches: Record<string, boolean>
   majProfil: (patch: Partial<Profil>) => void
   ajouterPesee: (p: Omit<Pesee, 'id'>) => void
@@ -60,6 +79,8 @@ export type Etat = {
   supprimerDosageHcg: (id: string) => void
   ajouterPlatPhoto: (p: PlatPhoto) => void
   supprimerPlatPhoto: (id: string) => void
+  ajouterDocument: (d: DocumentMedical) => void
+  supprimerDocument: (id: string) => void
   basculerCoche: (id: string) => void
   toutEffacer: () => void
 }
