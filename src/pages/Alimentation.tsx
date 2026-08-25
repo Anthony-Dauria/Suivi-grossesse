@@ -12,13 +12,15 @@ import { IDEES_REPAS, NUTRIMENTS, REGLES_HYGIENE, SYMPTOMES } from '../data/nutr
 import { Carte, Depliant, Onglets, Puce, TitreSection, Vide, classesInput } from '../components/ui'
 import { Icone } from '../components/Icones'
 import { AideDecision } from '../components/AideDecision'
+import { MesPlats } from '../components/MesPlats'
 import { normaliser, ordinal } from '../lib/texte'
 import { useDonnees } from '../lib/donnees'
 
-type Vue = 'recherche' | 'nutriments' | 'repas' | 'maux' | 'hygiene'
+type Vue = 'recherche' | 'plats' | 'nutriments' | 'repas' | 'maux' | 'hygiene'
 
 const VUES = [
   { id: 'recherche' as const, label: 'Puis-je manger ?' },
+  { id: 'plats' as const, label: 'Mes plats' },
   { id: 'nutriments' as const, label: 'Nutriments clés' },
   { id: 'repas' as const, label: 'Idées de repas' },
   { id: 'maux' as const, label: 'Petits maux' },
@@ -49,6 +51,7 @@ export function Alimentation({ vueInitiale }: { vueInitiale?: string }) {
     <div className="animate-rise">
       <Onglets valeur={vue} options={VUES} onChange={setVue} />
       {vue === 'recherche' && <Recherche />}
+      {vue === 'plats' && <MesPlats />}
       {vue === 'nutriments' && <VueNutriments />}
       {vue === 'repas' && <VueRepas />}
       {vue === 'maux' && <VueMaux />}

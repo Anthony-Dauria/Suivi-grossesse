@@ -177,6 +177,10 @@ export function Reglages() {
           Tout est enregistré uniquement sur cet appareil, dans le navigateur. Rien n’est envoyé
           nulle part. Pense à exporter une sauvegarde de temps en temps.
         </p>
+        <p className="mt-2 text-[12px] leading-relaxed text-muted">
+          La sauvegarde contient le suivi, les listes et les verdicts des plats, mais pas les
+          photos elles-mêmes : elles restent sur cet appareil.
+        </p>
         <div className="mt-4 flex gap-3">
           <Bouton variante="secondaire" className="flex-1" onClick={exporter}>
             Exporter

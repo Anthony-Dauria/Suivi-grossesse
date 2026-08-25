@@ -16,6 +16,14 @@ export type Contraction = { id: string; debutISO: string; dureeSec: number }
 export type Question = { id: string; texte: string; repondu: boolean }
 export type RdvPerso = { id: string; titre: string; date: string; heure: string; lieu: string }
 export type Prenom = { id: string; nom: string; sexe: 'fille' | 'garcon' | 'mixte'; favori: boolean }
+/** Plat photographié : la photo elle-même vit dans IndexedDB, sous ce même id */
+export type PlatPhoto = {
+  id: string
+  date: string
+  nom: string
+  statut: 'oui' | 'prudence' | 'non'
+  note: string
+}
 /** Dosage de bêta-hCG sanguin, en mUI/mL */
 export type DosageHcg = { id: string; date: string; valeur: number }
 
@@ -30,6 +38,7 @@ export type Etat = {
   rdvs: RdvPerso[]
   prenoms: Prenom[]
   dosagesHcg: DosageHcg[]
+  platsPhoto: PlatPhoto[]
   coches: Record<string, boolean>
   majProfil: (patch: Partial<Profil>) => void
   ajouterPesee: (p: Omit<Pesee, 'id'>) => void
@@ -49,6 +58,8 @@ export type Etat = {
   supprimerPrenom: (id: string) => void
   ajouterDosageHcg: (d: Omit<DosageHcg, 'id'>) => void
   supprimerDosageHcg: (id: string) => void
+  ajouterPlatPhoto: (p: PlatPhoto) => void
+  supprimerPlatPhoto: (id: string) => void
   basculerCoche: (id: string) => void
   toutEffacer: () => void
 }

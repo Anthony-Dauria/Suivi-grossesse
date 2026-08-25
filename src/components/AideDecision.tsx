@@ -1,100 +1,53 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Carte, Puce } from './ui'
-import { STATUT_LABEL, type Statut } from '../data/aliments'
+import { STATUT_LABEL } from '../data/aliments'
+import { CRITERES, evaluer, type Decision } from '../lib/decisionPlat'
 
-type Critere = {
-  cle: string
-  question: string
-  /** Ce que ce critère implique quand le plat n'est pas cuit à cœur */
-  risque: string
-  /** true si une cuisson à cœur suffit à lever le risque */
-  leveParLaCuisson: boolean
-}
+const TON = { oui: 'sage', prudence: 'amber', non: 'clay' } as const
 
-const CRITERES: Critere[] = [
-  {
-    cle: 'cru',
-    question: 'De la viande, du poisson ou un œuf crus ou peu cuits',
-    risque: 'chair ou œuf crus : toxoplasmose, listeria, salmonelle',
-    leveParLaCuisson: true,
-  },
-  {
-    cle: 'laitCru',
-    question: 'Un fromage au lait cru, ou un fromage avec sa croûte',
-    risque: 'lait cru et croûte : listeria',
-    leveParLaCuisson: true,
-  },
-  {
-    cle: 'charcuterie',
-    question: 'De la charcuterie crue : jambon cru, saucisson, pâté, rillettes',
-    risque: 'charcuterie crue ou en gelée : listeria et toxoplasmose',
-    leveParLaCuisson: true,
-  },
-  {
-    cle: 'fume',
-    question: 'Du poisson fumé, mariné ou des œufs de poisson',
-    risque: 'fumage à froid : la listeria y survit',
-    leveParLaCuisson: true,
-  },
-  {
-    cle: 'crudites',
-    question: 'Des crudités, des herbes fraîches ou des graines germées',
-    risque: 'terre résiduelle : toxoplasmose si elles ne sont pas lavées',
-    leveParLaCuisson: true,
-  },
-  {
-    cle: 'vitrine',
-    question: 'Un plat resté en vitrine, au buffet ou préparé à l’avance',
-    risque: 'chaîne du froid incertaine : la listeria se multiplie même au frais',
-    leveParLaCuisson: false,
-  },
-]
-
-export function AideDecision() {
+/**
+ * Questionnaire qui déduit un verdict de la composition d'un plat. Utilisé seul
+ * quand la recherche ne trouve rien, et intégré à la fiche d'un plat photographié.
+ */
+export function AideDecision({
+  intro = true,
+  sansCadre = false,
+  onDecision,
+}: {
+  intro?: boolean
+  sansCadre?: boolean
+  onDecision?: (decision: Decision, coches: Record<string, boolean>, cuit: boolean | null) => void
+}) {
   const [coches, setCoches] = useState<Record<string, boolean>>({})
   const [cuit, setCuit] = useState<boolean | null>(null)
+  const decision = evaluer(coches, cuit)
 
-  const basculer = (cle: string) => setCoches((c) => ({ ...c, [cle]: !c[cle] }))
-  const retenus = CRITERES.filter((c) => coches[c.cle])
-  const repondu = cuit !== null || retenus.length > 0
+  useEffect(() => {
+    onDecision?.(decision, coches, cuit)
+    // onDecision est recréé à chaque rendu du parent : on ne suit que l'état réel.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [coches, cuit])
 
-  const bloquants = retenus.filter((c) => !c.leveParLaCuisson || cuit !== true)
+  const contenu = (
+    <>
+      {intro && (
+        <>
+          <p className="text-[15px] font-medium text-ink">Aide-moi à décider</p>
+          <p className="mt-1 text-[13px] leading-relaxed text-muted">
+            Le plat n’est pas dans la liste ? Coche ce qu’il contient, la réponse se construit
+            toute seule.
+          </p>
+        </>
+      )}
 
-  let statut: Statut = 'oui'
-  let phrase =
-    'Rien de ce qui pose problème pendant la grossesse. Ce plat peut se manger tel quel.'
-
-  if (bloquants.length > 0) {
-    statut = 'non'
-    phrase =
-      'Mieux vaut passer ton tour, ou faire modifier la préparation avant de la commander.'
-  } else if (retenus.length > 0 && cuit === true) {
-    statut = 'oui'
-    phrase =
-      'La cuisson à cœur lève le risque : servi bien chaud, ce plat est autorisé.'
-  } else if (cuit === false && retenus.length === 0) {
-    statut = 'prudence'
-    phrase =
-      'Rien d’identifié comme risqué, mais un plat qui n’est ni cuit ni chaud mérite de savoir comment il a été préparé.'
-  }
-
-  const ton = statut === 'oui' ? 'sage' : statut === 'prudence' ? 'amber' : 'clay'
-
-  return (
-    <Carte>
-      <p className="text-[15px] font-medium text-ink">Aide-moi à décider</p>
-      <p className="mt-1 text-[13px] leading-relaxed text-muted">
-        Le plat n’est pas dans la liste ? Coche ce qu’il contient, la réponse se construit toute
-        seule.
-      </p>
-
-      <div className="mt-4 space-y-2">
+      <div className={intro ? 'mt-4 space-y-2' : 'space-y-2'}>
         {CRITERES.map((c) => {
           const actif = !!coches[c.cle]
           return (
             <button
               key={c.cle}
-              onClick={() => basculer(c.cle)}
+              onClick={() => setCoches((x) => ({ ...x, [c.cle]: !x[c.cle] }))}
+              aria-pressed={actif}
               className="flex w-full items-start gap-3 rounded-xl border border-line bg-white px-3 py-2.5 text-left transition active:scale-[0.99]"
             >
               <span
@@ -128,13 +81,13 @@ export function AideDecision() {
         ))}
       </div>
 
-      {repondu && (
+      {decision.repondu && (
         <div className="mt-4 border-t border-line pt-4">
-          <Puce ton={ton}>{STATUT_LABEL[statut]}</Puce>
-          <p className="mt-2.5 text-sm leading-relaxed text-ink">{phrase}</p>
-          {bloquants.length > 0 && (
+          <Puce ton={TON[decision.statut]}>{STATUT_LABEL[decision.statut]}</Puce>
+          <p className="mt-2.5 text-sm leading-relaxed text-ink">{decision.phrase}</p>
+          {decision.bloquants.length > 0 && (
             <ul className="mt-3 space-y-1.5">
-              {bloquants.map((c) => (
+              {decision.bloquants.map((c) => (
                 <li key={c.cle} className="flex gap-2.5 text-[13px] leading-relaxed text-muted">
                   <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-clay-deep" />
                   <span>{c.risque}</span>
@@ -143,12 +96,14 @@ export function AideDecision() {
             </ul>
           )}
           <p className="mt-3 rounded-xl bg-cream px-3 py-2.5 text-[12px] leading-relaxed text-muted">
-            La règle qui marche presque toujours : <strong className="text-ink">bien lavé, bien
-            cuit, bien chaud</strong>. Tout ce qui est cuit à cœur juste avant d’être servi est
-            autorisé, quelle que soit sa composition.
+            La règle qui marche presque toujours :{' '}
+            <strong className="text-ink">bien lavé, bien cuit, bien chaud</strong>. Tout ce qui est
+            cuit à cœur juste avant d’être servi est autorisé, quelle que soit sa composition.
           </p>
         </div>
       )}
-    </Carte>
+    </>
   )
+
+  return sansCadre ? <div>{contenu}</div> : <Carte>{contenu}</Carte>
 }

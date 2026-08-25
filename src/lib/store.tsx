@@ -7,6 +7,7 @@ import {
   idUnique,
   type Contraction,
   type DosageHcg,
+  type PlatPhoto,
   type Etat,
   type NoteJournal,
   type Pesee,
@@ -55,6 +56,7 @@ export function FournisseurDonnees({ children }: { children: ReactNode }) {
   const [rdvs, setRdvs] = useState<RdvPerso[]>(() => lireListe('rdvs'))
   const [prenoms, setPrenoms] = useState<Prenom[]>(() => lireListe('prenoms'))
   const [dosagesHcg, setDosagesHcg] = useState<DosageHcg[]>(() => lireListe('dosagesHcg'))
+  const [platsPhoto, setPlatsPhoto] = useState<PlatPhoto[]>(() => lireListe('platsPhoto'))
   const [coches, setCoches] = useState<Record<string, boolean>>(() => lire('coches', {}))
 
   useEffect(() => ecrire('profil', profil), [profil])
@@ -66,6 +68,7 @@ export function FournisseurDonnees({ children }: { children: ReactNode }) {
   useEffect(() => ecrire('rdvs', rdvs), [rdvs])
   useEffect(() => ecrire('prenoms', prenoms), [prenoms])
   useEffect(() => ecrire('dosagesHcg', dosagesHcg), [dosagesHcg])
+  useEffect(() => ecrire('platsPhoto', platsPhoto), [platsPhoto])
   useEffect(() => ecrire('coches', coches), [coches])
 
   // Recalcule l’état de la grossesse au changement de jour (onglet laissé ouvert)
@@ -98,6 +101,7 @@ export function FournisseurDonnees({ children }: { children: ReactNode }) {
     rdvs,
     prenoms,
     dosagesHcg,
+    platsPhoto,
     coches,
     majProfil,
     ajouterPesee: (p) =>
@@ -134,6 +138,8 @@ export function FournisseurDonnees({ children }: { children: ReactNode }) {
         ),
       ),
     supprimerDosageHcg: (id) => setDosagesHcg((liste) => liste.filter((d) => d.id !== id)),
+    ajouterPlatPhoto: (p) => setPlatsPhoto((liste) => [p, ...liste]),
+    supprimerPlatPhoto: (id) => setPlatsPhoto((liste) => liste.filter((p) => p.id !== id)),
     basculerCoche: (id) => setCoches((c) => ({ ...c, [id]: !c[id] })),
     toutEffacer: () => {
       Object.keys(localStorage)
@@ -148,6 +154,7 @@ export function FournisseurDonnees({ children }: { children: ReactNode }) {
       setRdvs([])
       setPrenoms([])
       setDosagesHcg([])
+      setPlatsPhoto([])
       setCoches({})
     },
   }
