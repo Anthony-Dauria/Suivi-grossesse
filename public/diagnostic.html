@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Diagnostic — Ma grossesse</title>
+    <style>
+      body { margin: 0; padding: 20px 16px 40px; background: #faf6f2; color: #2e2926;
+             font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      p.sous { margin: 0 0 20px; color: #7d716b; font-size: 13px; }
+      .bloc { background: #fff; border: 1px solid #ebe2da; border-radius: 14px;
+              padding: 12px 14px; margin-bottom: 10px; }
+      .titre { font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+               color: #7d716b; font-weight: 700; margin-bottom: 6px; }
+      .val { font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+             word-break: break-all; white-space: pre-wrap; }
+      .ok { color: #52755a; font-weight: 700; }
+      .ko { color: #b2503f; font-weight: 700; }
+      button { display: block; width: 100%; margin-top: 18px; padding: 14px;
+               border: 0; border-radius: 999px; background: #b85f72; color: #fff;
+               font-size: 16px; font-weight: 600; }
+      a.retour { display: block; text-align: center; margin-top: 14px; color: #b85f72; }
+    </style>
+  </head>
+  <body>
+    <h1>Diagnostic</h1>
+    <p class="sous">
+      Cette page n’utilise ni l’application ni son cache. Fais-en une capture d’écran et envoie-la.
+    </p>
+    <div id="sortie"></div>
+    <button id="reparer">Réparer et revenir à l’application</button>
+    <a class="retour" href="./">Revenir sans rien changer</a>
+
+    <script>
+      /* Volontairement en syntaxe ancienne : cette page doit s'exécuter même sur
+         un Safari trop vieux pour l'application elle-même. */
+      var sortie = document.getElementById('sortie')
+
+      function bloc(titre, valeur) {
+        var d = document.createElement('div')
+        d.className = 'bloc'
+        d.innerHTML = '<div class="titre">' + titre + '</div><div class="val">' + valeur + '</div>'
+        sortie.appendChild(d)
+      }
+      function oui(t) { return '<span class="ok">' + t + '</span>' }
+      function non(t) { return '<span class="ko">' + t + '</span>' }
+
+      bloc('Navigateur', navigator.userAgent)
+
+      // L'application est compilée en JavaScript moderne : si ces syntaxes
+      // ne passent pas, le bundle ne peut tout simplement pas s'exécuter.
+      var syntaxes = [
+        ['optional chaining', 'var f=function(a){return a?.b}; f({})'],
+        ['nullish', 'var x = null ?? 1'],
+        ['champs de classe', 'class A { b = 1 }; new A()'],
+        ['at()', '[1,2].at(-1)'],
+        ['structuredClone', 'typeof structuredClone'],
+      ]
+      var manquantes = []
+      for (var i = 0; i < syntaxes.length; i++) {
+        try { new Function(syntaxes[i][1])() } catch (e) { manquantes.push(syntaxes[i][0]) }
+      }
+      bloc(
+        'Compatibilité JavaScript',
+        manquantes.length === 0
+          ? oui('Toutes les syntaxes modernes sont supportées')
+          : non('NON supporté : ' + manquantes.join(', ')),
+      )
+
+      bloc('Stockage', (function () {
+        var n = 0, cles = []
+        try {
+          for (var i = 0; i < localStorage.length; i++) {
+            var c = localStorage.key(i)
+            if (c && c.indexOf('suivi-grossesse:') === 0) { n++; cles.push(c.replace('suivi-grossesse:', '')) }
+          }
+        } catch (e) { return non('localStorage inaccessible : ' + e.message) }
+        return n === 0
+          ? non('Aucune donnée enregistrée')
+          : oui(n + ' entrées') + '\n' + cles.join(', ')
+      })())
+
+      if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          if (!regs.length) return bloc('Service workers', 'Aucun')
+          var t = []
+          for (var i = 0; i < regs.length; i++) {
+            var a = regs[i].active
+            t.push('scope ' + regs[i].scope + '\nscript ' + (a ? a.scriptURL : '—'))
+          }
+          bloc('Service workers', t.join('\n\n'))
+        })
+      }
+
+      if (window.caches) {
+        caches.keys().then(function (noms) {
+          bloc('Caches', noms.length ? noms.join('\n') : 'Aucun')
+        })
+      }
+
+      // Le HTML servi actuellement pointe-t-il vers un fichier qui existe ?
+      fetch('./index.html?diag=' + Date.now(), { cache: 'reload' })
+        .then(function (r) { return r.text() })
+        .then(function (html) {
+          var m = html.match(/src="([^"]*assets\/[^"]*\.js)"/)
+          if (!m) return bloc('Fichier de l’application', non('Aucun script trouvé dans la page'))
+          var chemin = m[1].replace(/^\.\//, '')
+          return fetch('./' + chemin, { cache: 'reload' }).then(function (r2) {
+            bloc(
+              'Fichier de l’application',
+              chemin + '\n' + (r2.ok ? oui('HTTP ' + r2.status + ' — présent') : non('HTTP ' + r2.status + ' — INTROUVABLE')),
+            )
+          })
+        })
+        .catch(function (e) { bloc('Fichier de l’application', non('Échec réseau : ' + e.message)) })
+
+      document.getElementById('reparer').onclick = function () {
+        this.disabled = true
+        this.textContent = 'Réparation…'
+        var taches = []
+        if (window.caches) {
+          taches.push(caches.keys().then(function (n) {
+            return Promise.all(n.map(function (x) { return caches.delete(x) }))
+          }))
+        }
+        if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+          taches.push(navigator.serviceWorker.getRegistrations().then(function (r) {
+            return Promise.all(r.map(function (x) { return x.unregister() }))
+          }))
+        }
+        // Ni localStorage ni IndexedDB ne sont touchés : les données restent.
+        Promise.all(taches).catch(function () {}).then(function () {
+          location.href = './?repare=' + Date.now()
+        })
+      }
+    </script>
+  </body>
+</html>
