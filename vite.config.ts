@@ -21,7 +21,12 @@ function serviceWorker(): Plugin {
         .filter((f) => f !== 'index.html')
         .map((f) => `./${f}`)
       const statiques = readdirSync('public').map((f) => `./${f}`)
-      const version = `v${Date.now().toString(36)}`
+      // Version déduite du contenu : deux builds identiques produisent le même
+      // service worker. Indispensable si le build est comparé ou versionné.
+      const empreinte = duBuild.join('|')
+      let somme = 0
+      for (let i = 0; i < empreinte.length; i++) somme = (somme * 31 + empreinte.charCodeAt(i)) >>> 0
+      const version = `v${somme.toString(36)}`
       const fichiers = ['./', ...duBuild, ...statiques]
 
       this.emitFile({
