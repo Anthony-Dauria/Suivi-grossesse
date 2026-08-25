@@ -15,6 +15,42 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Filet de sécurité : si l'application n'a rien affiché quelques secondes
+      // après le chargement, c'est en pratique qu'un fichier mis en cache manque
+      // à l'appel. On vide caches et service workers, puis on recharge — une
+      // seule fois par session, pour ne jamais boucler.
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          var racine = document.getElementById('root')
+          if (racine && racine.children.length > 0) return
+          try {
+            if (sessionStorage.getItem('reparation-tentee')) return
+            sessionStorage.setItem('reparation-tentee', '1')
+          } catch (e) {
+            return
+          }
+          var taches = []
+          if (window.caches) {
+            taches.push(
+              caches.keys().then(function (noms) {
+                return Promise.all(noms.map(function (n) { return caches.delete(n) }))
+              }),
+            )
+          }
+          if (navigator.serviceWorker) {
+            taches.push(
+              navigator.serviceWorker.getRegistrations().then(function (regs) {
+                return Promise.all(regs.map(function (r) { return r.unregister() }))
+              }),
+            )
+          }
+          Promise.all(taches)
+            .catch(function () {})
+            .then(function () { location.reload() })
+        }, 5000)
+      })
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -116,6 +116,14 @@ l’écran d’accueil »**.
 Le premier lancement doit se faire avec du réseau, le temps que le service worker mette
 l’application en cache ; ensuite elle s’ouvre hors connexion.
 
+Le service worker est **généré au build** (`vite.config.ts`) à partir des fichiers réellement
+produits : le cache porte le numéro du build, et l’installation précharge la page **et** les
+fichiers qu’elle référence d’un seul bloc. C’est ce qui évite le piège classique des PWA — un
+`index.html` gardé en cache qui survit à un déploiement et réclame des fichiers horodatés
+désormais absents du serveur, ce qui donne un écran blanc. En complément, la page se répare
+d’elle-même : si rien ne s’est affiché cinq secondes après le chargement, elle vide caches et
+service workers puis recharge, une seule fois par session.
+
 Les données sont enregistrées dans le navigateur de l’appareil : elles ne suivent pas d’un
 téléphone à l’autre. L’écran Réglages permet d’exporter une sauvegarde JSON et de la réimporter.
 C’est aussi là qu’on cale la règle « taille réelle » sur une carte bancaire.
