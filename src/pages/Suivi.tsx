@@ -1,16 +1,25 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Bouton, Carte, Champ, Onglets, Puce, TitreSection, Vide, classesInput } from '../components/ui'
 import { CourbePoids } from '../components/CourbePoids'
+import { CourbeHcg } from '../components/CourbeHcg'
 import { Icone } from '../components/Icones'
 import { useDonnees } from '../lib/donnees'
 import { PRISE_DE_POIDS } from '../data/nutrition'
+import {
+  FOURCHETTES_HCG,
+  NOTE_HCG,
+  fourchettePourSA,
+  libelleDoublement,
+  tempsDeDoublement,
+} from '../data/hcg'
 import { aujourdhui, depuisISO, formatCourt, nombreFr, versISO } from '../lib/dates'
 import { categorieIMC, imc, poidsAttendu } from '../lib/grossesse'
 
-type Vue = 'poids' | 'journal' | 'mouvements' | 'contractions'
+type Vue = 'poids' | 'hcg' | 'journal' | 'mouvements' | 'contractions'
 
 const VUES = [
   { id: 'poids' as const, label: 'Poids' },
+  { id: 'hcg' as const, label: 'hCG' },
   { id: 'journal' as const, label: 'Journal' },
   { id: 'mouvements' as const, label: 'Mouvements' },
   { id: 'contractions' as const, label: 'Contractions' },
@@ -22,6 +31,7 @@ export function Suivi({ vueInitiale }: { vueInitiale?: string }) {
     <div className="animate-rise">
       <Onglets valeur={vue} options={VUES} onChange={setVue} />
       {vue === 'poids' && <VuePoids />}
+      {vue === 'hcg' && <VueHcg />}
       {vue === 'journal' && <VueJournal />}
       {vue === 'mouvements' && <VueMouvements />}
       {vue === 'contractions' && <VueContractions />}
@@ -200,6 +210,164 @@ function VuePoids() {
       <p className="mt-3 text-[12px] leading-relaxed text-muted">
         Ces fourchettes sont indicatives. Ce qui compte, c’est la régularité de la courbe, pas le
         chiffre exact — c’est ta sage-femme qui l’interprète.
+      </p>
+    </>
+  )
+}
+
+function VueHcg() {
+  const { grossesse, dosagesHcg, ajouterDosageHcg, supprimerDosageHcg } = useDonnees()
+  const [date, setDate] = useState(versISO(aujourdhui()))
+  const [valeur, setValeur] = useState('')
+
+  const dernier = dosagesHcg[dosagesHcg.length - 1]
+  const avantDernier = dosagesHcg[dosagesHcg.length - 2]
+
+  const doublement =
+    dernier && avantDernier
+      ? tempsDeDoublement(
+          avantDernier.valeur,
+          depuisISO(avantDernier.date),
+          dernier.valeur,
+          depuisISO(dernier.date),
+        )
+      : null
+
+  const fourchette = grossesse ? fourchettePourSA(grossesse.sa) : undefined
+  const dansLaFourchette =
+    dernier && fourchette
+      ? dernier.valeur >= fourchette.min && dernier.valeur <= fourchette.max
+      : null
+
+  return (
+    <>
+      <Carte className="bg-sky-soft/50">
+        <p className="text-sm leading-relaxed text-sky-deep">{NOTE_HCG}</p>
+      </Carte>
+
+      {dosagesHcg.length > 0 && (
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <Carte className="text-center">
+            <p className="text-[12px] text-muted">Dernier dosage</p>
+            <p className="mt-1 font-display text-xl text-ink">
+              {dernier.valeur.toLocaleString('fr-FR')}
+            </p>
+            <p className="text-[11px] text-muted">mUI/mL</p>
+          </Carte>
+          <Carte className="text-center">
+            <p className="text-[12px] text-muted">Doublement observé</p>
+            <p className="mt-1 font-display text-xl text-ink">
+              {doublement ? `${Math.round(doublement)} h` : '—'}
+            </p>
+            <p className="text-[11px] text-muted">
+              {dernier ? `attendu ${libelleDoublement(avantDernier?.valeur ?? dernier.valeur)}` : ''}
+            </p>
+          </Carte>
+        </div>
+      )}
+
+      {dansLaFourchette !== null && fourchette && (
+        <div className="mt-3 flex justify-center">
+          <Puce ton={dansLaFourchette ? 'sage' : 'amber'}>
+            {dansLaFourchette
+              ? `Dans l’ordre de grandeur attendu à ${fourchette.libelle}`
+              : `Hors de la fourchette indicative de ${fourchette.libelle}`}
+          </Puce>
+        </div>
+      )}
+
+      {grossesse && dosagesHcg.length > 0 && (
+        <Carte className="mt-4">
+          <CourbeHcg dosages={dosagesHcg} ddr={grossesse.ddr} />
+          <p className="mt-2 text-center text-[12px] leading-relaxed text-muted">
+            Échelle logarithmique, en semaines d’aménorrhée. La zone verte est la fourchette
+            indicative pour chaque semaine.
+          </p>
+        </Carte>
+      )}
+
+      <TitreSection>Ajouter un dosage</TitreSection>
+      <Carte>
+        <div className="flex gap-3">
+          <div className="flex-1">
+            <Champ label="Date de la prise de sang">
+              <input
+                type="date"
+                className={classesInput}
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </Champ>
+          </div>
+          <div className="w-32">
+            <Champ label="Taux">
+              <input
+                type="number"
+                inputMode="numeric"
+                placeholder="mUI/mL"
+                className={classesInput}
+                value={valeur}
+                onChange={(e) => setValeur(e.target.value)}
+              />
+            </Champ>
+          </div>
+        </div>
+        <Bouton
+          className="mt-3 w-full"
+          disabled={!valeur || !date || Number(valeur) <= 0}
+          onClick={() => {
+            ajouterDosageHcg({ date, valeur: Number(valeur) })
+            setValeur('')
+          }}
+        >
+          Enregistrer
+        </Bouton>
+      </Carte>
+
+      {dosagesHcg.length > 0 && (
+        <>
+          <TitreSection>Historique</TitreSection>
+          <div className="space-y-2">
+            {[...dosagesHcg].reverse().map((d) => (
+              <Carte key={d.id} className="flex items-center gap-3 py-3">
+                <span className="flex-1 text-sm text-muted">{formatCourt(depuisISO(d.date))}</span>
+                <span className="font-display text-lg text-ink">
+                  {d.valeur.toLocaleString('fr-FR')}
+                </span>
+                <span className="text-[11px] text-muted">mUI/mL</span>
+                <button
+                  onClick={() => supprimerDosageHcg(d.id)}
+                  aria-label="Supprimer"
+                  className="text-muted transition hover:text-clay-deep"
+                >
+                  <Icone nom="poubelle" className="size-4" />
+                </button>
+              </Carte>
+            ))}
+          </div>
+        </>
+      )}
+
+      <TitreSection>Les fourchettes indicatives</TitreSection>
+      <div className="space-y-2">
+        {FOURCHETTES_HCG.map((f) => {
+          const actif = grossesse ? grossesse.sa >= f.de && grossesse.sa <= f.a : false
+          return (
+            <Carte key={f.libelle} className={actif ? 'border-rose bg-rose-soft/40' : ''}>
+              <div className="flex items-baseline justify-between gap-3">
+                <p className="text-[15px] font-medium text-ink">{f.libelle}</p>
+                <p className="font-display text-base text-rose-deep">
+                  {f.min.toLocaleString('fr-FR')} – {f.max.toLocaleString('fr-FR')}
+                </p>
+              </div>
+            </Carte>
+          )
+        })}
+      </div>
+      <p className="mt-3 text-[12px] leading-relaxed text-muted">
+        Ces bornes couvrent l’immense majorité des grossesses normales, mais un taux en dehors ne
+        signifie pas qu’il y a un problème, ni l’inverse. Elles ne remplacent pas la lecture du
+        laboratoire ni celle du médecin.
       </p>
     </>
   )

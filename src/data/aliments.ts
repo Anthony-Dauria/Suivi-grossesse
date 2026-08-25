@@ -9,6 +9,7 @@ export type Categorie =
   | 'Boissons'
   | 'Sucré & épicerie'
   | 'Plantes & compléments'
+  | 'Plats & recettes'
 
 export type Aliment = {
   nom: string
@@ -675,4 +676,5 @@ export const CATEGORIES: Categorie[] = [
   'Boissons',
   'Sucré & épicerie',
   'Plantes & compléments',
+  'Plats & recettes',
 ]

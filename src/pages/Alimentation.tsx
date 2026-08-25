@@ -7,9 +7,11 @@ import {
   type Categorie,
   type Statut,
 } from '../data/aliments'
+import { PLATS } from '../data/plats'
 import { IDEES_REPAS, NUTRIMENTS, REGLES_HYGIENE, SYMPTOMES } from '../data/nutrition'
 import { Carte, Depliant, Onglets, Puce, TitreSection, Vide, classesInput } from '../components/ui'
 import { Icone } from '../components/Icones'
+import { AideDecision } from '../components/AideDecision'
 import { normaliser, ordinal } from '../lib/texte'
 import { useDonnees } from '../lib/donnees'
 
@@ -37,6 +39,9 @@ const PASTILLE: Record<Statut, string> = {
 
 const SYMBOLE: Record<Statut, string> = { oui: '✓', prudence: '!', non: '✕' }
 
+/** Ingrédients bruts et plats composés, cherchés ensemble */
+const FICHES: Aliment[] = [...ALIMENTS, ...PLATS]
+
 export function Alimentation({ vueInitiale }: { vueInitiale?: string }) {
   const [vue, setVue] = useState<Vue>((vueInitiale as Vue) || 'recherche')
 
@@ -61,7 +66,7 @@ function Recherche() {
 
   const resultats = useMemo(() => {
     const q = normaliser(requete)
-    return ALIMENTS.filter((a) => {
+    return FICHES.filter((a) => {
       if (statutFiltre !== 'tous' && a.statut !== statutFiltre) return false
       if (categorie !== 'toutes' && a.cat !== categorie) return false
       if (!q) return true
@@ -89,7 +94,7 @@ function Recherche() {
         />
         <input
           className={`${classesInput} pl-11`}
-          placeholder="Sushi, camembert, café…"
+          placeholder="Raclette, poke bowl, camembert…"
           value={requete}
           onChange={(e) => setRequete(e.target.value)}
         />
@@ -147,13 +152,9 @@ function Recherche() {
       </p>
 
       {resultats.length === 0 && (
-        <div className="mt-3">
-          <Vide>
-            Aucun résultat pour « {requete} ».
-            <br />
-            En cas de doute sur un aliment, la règle qui marche presque toujours : bien lavé et bien
-            cuit, c’est autorisé.
-          </Vide>
+        <div className="mt-3 space-y-3">
+          <Vide>Aucune fiche pour « {requete} ».</Vide>
+          <AideDecision />
         </div>
       )}
 
@@ -189,6 +190,13 @@ function Recherche() {
           </div>
         </div>
       ))}
+
+      {resultats.length > 0 && (
+        <>
+          <TitreSection>Un plat qui n’est pas dans la liste ?</TitreSection>
+          <AideDecision />
+        </>
+      )}
     </>
   )
 }

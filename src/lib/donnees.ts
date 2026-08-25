@@ -16,6 +16,8 @@ export type Contraction = { id: string; debutISO: string; dureeSec: number }
 export type Question = { id: string; texte: string; repondu: boolean }
 export type RdvPerso = { id: string; titre: string; date: string; heure: string; lieu: string }
 export type Prenom = { id: string; nom: string; sexe: 'fille' | 'garcon' | 'mixte'; favori: boolean }
+/** Dosage de bêta-hCG sanguin, en mUI/mL */
+export type DosageHcg = { id: string; date: string; valeur: number }
 
 export type Etat = {
   profil: Profil
@@ -27,6 +29,7 @@ export type Etat = {
   questions: Question[]
   rdvs: RdvPerso[]
   prenoms: Prenom[]
+  dosagesHcg: DosageHcg[]
   coches: Record<string, boolean>
   majProfil: (patch: Partial<Profil>) => void
   ajouterPesee: (p: Omit<Pesee, 'id'>) => void
@@ -44,6 +47,8 @@ export type Etat = {
   ajouterPrenom: (nom: string, sexe: Prenom['sexe']) => void
   basculerPrenom: (id: string) => void
   supprimerPrenom: (id: string) => void
+  ajouterDosageHcg: (d: Omit<DosageHcg, 'id'>) => void
+  supprimerDosageHcg: (id: string) => void
   basculerCoche: (id: string) => void
   toutEffacer: () => void
 }
